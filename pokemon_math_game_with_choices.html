@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポケモンたしざんゲーム</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #fffaf0, #ffe4e1);
+            text-align: center;
+            color: #ff1493;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .pokemon-image {
+            width: 120px;
+            height: 120px;
+        }
+        .number-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .number {
+            font-size: 3em;
+            color: #ff69b4;
+        }
+        .button, .answer-button {
+            font-size: 1.5em;
+            padding: 15px 30px;
+            margin: 15px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button {
+            background-color: #ff66b2;
+        }
+        .button:hover {
+            background-color: #ff3399;
+        }
+        .answer-button {
+            background-color: #ffb6c1;
+        }
+        .answer-button:hover {
+            background-color: #ff91a4;
+        }
+        .correct {
+            background-color: #ff69b4;
+            color: white;
+        }
+        .incorrect {
+            background-color: #ff4040;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        .encouragement-message {
+            font-size: 1.8em;
+            color: #ff4040;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="start-screen">
+        <h1>ポケモンたしざんゲーム</h1>
+        <img id="start-pokemon" src="" alt="ぽけもん" class="pokemon-image" style="display: block; margin: 0 auto;">
+        <button class="button" onclick="startGame()" style="display: block; margin: 20px auto;">はじめる</button>
+    </div>
+    <div id="game" class="hidden">
+        <div class="number-container">
+            <div id="number1" class="number"></div>
+            <div id="plus">+</div>
+            <div id="number2" class="number"></div>
+            <div id="equals">=</div>
+            <div id="result" class="number">?</div>
+        </div>
+    </div>
+    <div id="answers" class="hidden">
+        <button class="answer-button" onclick="checkAnswer(0)"></button>
+        <button class="answer-button" onclick="checkAnswer(1)"></button>
+        <button class="answer-button" onclick="checkAnswer(2)"></button>
+        <button class="answer-button" onclick="checkAnswer(3)"></button>
+    </div>
+    <button id="new-problem-button" class="button hidden" onclick="generateNewProblem()">あたらしいもんだい</button>
+
+    <div id="result-screen" class="hidden">
+        <div id="result-message" style="font-size: 3em; margin-top: 20px;"></div>
+        <img id="result-pokemon" src="" alt="ぽけもん" class="pokemon-image">
+        <div id="pokemon-name" style="font-size: 1.8em; margin-top: 10px;"></div>
+        <div id="pokemon-types" style="margin-top: 5px;"></div>
+        <button class="button" onclick="startGame()">もういちど</button>
+    </div>
+
+    <script>
+        const pokemonApiUrl = 'https://pokeapi.co/api/v2/pokemon/';
+        const maxPokemonId = 151; // しょだいぽけもんのみしよう
+        let correctAnswer;
+
+        function getRandomNumber() {
+            return Math.floor(Math.random() * 10) + 1;
+        }
+
+        function getRandomPokemonId() {
+            return Math.floor(Math.random() * maxPokemonId) + 1;
+        }
+
+        async function fetchPokemonImage(pokemonId) {
+            try {
+                const response = await fetch(pokemonApiUrl + pokemonId);
+                const data = await response.json();
+                return data.sprites.front_default;
+            } catch (error) {
+                console.error('ポケモン画像の取得に失敗しました:', error);
+                return '';
+            }
+        }
+
+        async function fetchPokemonInfo(pokemonId) {
+            try {
+                const response = await fetch(`${pokemonApiUrl}${pokemonId}`);
+                const data = await response.json();
+                const responseSpecies = await fetch(data.species.url);
+                const speciesData = await responseSpecies.json();
+                const nameInfo = speciesData.names.find(nameInfo => nameInfo.language.name === 'ja');
+                const name = nameInfo ? nameInfo.name : '不明';
+                const types = data.types.map(typeInfo => {
+                    const typeName = typeInfo.type.name;
+                    switch (typeName) {
+                        case 'normal': return 'ノーマル';
+                        case 'fire': return 'ほのお';
+                        case 'water': return 'みず';
+                        case 'electric': return 'でんき';
+                        case 'grass': return 'くさ';
+                        case 'ice': return 'こおり';
+                        case 'fighting': return 'かくとう';
+                        case 'poison': return 'どく';
+                        case 'ground': return 'じめん';
+                        case 'flying': return 'ひこう';
+                        case 'psychic': return 'エスパー';
+                        case 'bug': return 'むし';
+                        case 'rock': return 'いわ';
+                        case 'ghost': return 'ゴースト';
+                        case 'dragon': return 'ドラゴン';
+                        case 'dark': return 'あく';
+                        case 'steel': return 'はがね';
+                        case 'fairy': return 'フェアリー';
+                        default: return typeName;
+                    }
+                }).join(', ');
+                return { name, types };
+            } catch (error) {
+                console.error('ポケモン情報の取得に失敗しました:', error);
+                return { name: '不明', types: '不明' };
+            }
+        }
+
+        async function startGame() {
+            toggleVisibility('start-screen', false);
+            toggleVisibility('game', true);
+            toggleVisibility('answers', true);
+            toggleVisibility('new-problem-button', true);
+            toggleVisibility('result-screen', false);
+            generateNewProblem();
+        }
+
+        async function generateNewProblem() {
+            const number1 = getRandomNumber();
+            const number2 = getRandomNumber();
+
+            document.getElementById('number1').innerText = number1;
+            document.getElementById('number2').innerText = number2;
+            document.getElementById('result').innerText = '?';
+
+            correctAnswer = number1 + number2;
+            const answers = generateAnswers(correctAnswer);
+            const answerButtons = document.querySelectorAll('.answer-button');
+            resetAnswerButtons(answerButtons);
+            answerButtons.forEach((button, index) => {
+                button.innerText = answers[index];
+            });
+        }
+
+        function generateAnswers(correctAnswer) {
+            const answers = new Set();
+            answers.add(correctAnswer);
+            while (answers.size < 4) {
+                let randomAnswer = getRandomNumber() + getRandomNumber();
+                if (randomAnswer !== correctAnswer) {
+                    answers.add(randomAnswer);
+                }
+            }
+            return Array.from(answers).sort(() => Math.random() - 0.5);
+        }
+
+        function resetAnswerButtons(answerButtons) {
+            answerButtons.forEach(button => {
+                button.className = 'answer-button';
+            });
+        }
+
+        async function checkAnswer(selectedAnswer) {
+            const answerButtons = document.querySelectorAll('.answer-button');
+            const selectedValue = parseInt(answerButtons[selectedAnswer].innerText);
+            const resultMessage = document.getElementById('result-message');
+            const resultPokemonId = getRandomPokemonId();
+            const resultPokemonImage = await fetchPokemonImage(resultPokemonId);
+            const resultPokemonInfo = await fetchPokemonInfo(resultPokemonId);
+
+            if (selectedValue === correctAnswer) {
+            resultMessage.innerHTML = '〇<br>すごい！せいかいです！';
+                answerButtons[selectedAnswer].classList.add('correct');
+            } else {
+            resultMessage.innerHTML = '×<br>ざんねん！つぎはがんばろう！';
+                answerButtons[selectedAnswer].classList.add('incorrect');
+            }
+
+            document.getElementById('result-pokemon').src = resultPokemonImage;
+            document.getElementById('pokemon-name').innerText = resultPokemonInfo.name;
+            const typesElement = document.getElementById('pokemon-types');
+            typesElement.innerHTML = 'タイプ：';
+            resultPokemonInfo.types.split(', ').forEach(type => {
+                const typeSpan = document.createElement('span');
+                typeSpan.innerText = type;
+                typeSpan.style.fontSize = '1.2em';
+                typeSpan.style.marginRight = '5px';
+                switch (type) {
+                    case 'ノーマル': typeSpan.style.color = '#A8A878'; break;
+                    case 'ほのお': typeSpan.style.color = '#F08030'; break;
+                    case 'みず': typeSpan.style.color = '#6890F0'; break;
+                    case 'でんき': typeSpan.style.color = '#F8D030'; break;
+                    case 'くさ': typeSpan.style.color = '#78C850'; break;
+                    case 'こおり': typeSpan.style.color = '#98D8D8'; break;
+                    case 'かくとう': typeSpan.style.color = '#C03028'; break;
+                    case 'どく': typeSpan.style.color = '#A040A0'; break;
+                    case 'じめん': typeSpan.style.color = '#E0C068'; break;
+                    case 'ひこう': typeSpan.style.color = '#A890F0'; break;
+                    case 'エスパー': typeSpan.style.color = '#F85888'; break;
+                    case 'むし': typeSpan.style.color = '#A8B820'; break;
+                    case 'いわ': typeSpan.style.color = '#B8A038'; break;
+                    case 'ゴースト': typeSpan.style.color = '#705898'; break;
+                    case 'ドラゴン': typeSpan.style.color = '#7038F8'; break;
+                    case 'あく': typeSpan.style.color = '#705848'; break;
+                    case 'はがね': typeSpan.style.color = '#B8B8D0'; break;
+                    case 'フェアリー': typeSpan.style.color = '#EE99AC'; break;
+                    default: typeSpan.style.color = '#000'; break;
+                }
+                typesElement.appendChild(typeSpan);
+            });
+            toggleVisibility('game', false);
+            toggleVisibility('answers', false);
+            toggleVisibility('new-problem-button', false);
+            toggleVisibility('result-screen', true);
+        }
+
+        function toggleVisibility(elementId, isVisible) {
+            const element = document.getElementById(elementId);
+            element.classList.toggle('hidden', !isVisible);
+        }
+
+        // しょきがめんのぽけもんがぞうをせってい
+        fetchPokemonImage(getRandomPokemonId()).then(image => {
+            document.getElementById('start-pokemon').src = image;
+        });
+    </script>
+</body>
+</html>

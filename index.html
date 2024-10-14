@@ -219,6 +219,28 @@
             padding: 40px;
             border-radius: 20px;
         }
+        /* 特別な報酬ポップアップのスタイル */
+        #special-reward-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* 初期状態は非表示 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #special-reward-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        #special-reward-popup.show {
+            display: flex;
+        }
     </style>
 </head>
 <body>
@@ -303,7 +325,7 @@
         <div id="special-reward-content">
             <h2 id="special-reward-title">とくべつなポケモンをてにいれた！</h2>
             <div id="special-pokemon-name" style="font-size: 2em; margin-top: 10px;"></div>
-            <img id="special-reward-pokemon-image" src="" alt="特別なポケモン">
+            <img id="special-reward-pokemon-image" src="" alt="特別なポケモン" class="pokemon-image">
             <div id="special-pokemon-types" style="margin-top: 5px;"></div>
             <button class="button" onclick="closeSpecialRewardPopup()">とじる</button>
         </div>

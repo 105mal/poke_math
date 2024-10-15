@@ -15,6 +15,17 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #8F00FF, #FF1493, #00CED1, #FFD700);
+            -webkit-background-clip: text;
+            background-clip: text; /* 追加: 標準プロパティ */
+            -webkit-text-fill-color: transparent;
         }
         h2 {
             font-size: 3em;
@@ -29,6 +40,17 @@
             height: 200px;
             cursor: pointer;
             margin: 10px;
+        }
+        .random-pokemon {
+            width: 250px; /* 大きく変更 */
+            height: 250px; /* 大きく変更 */
+            margin: 10px;
+        }
+        .random-pokemons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
         }
         .number-container {
             display: flex;
@@ -51,6 +73,8 @@
             background-color: #1e90ff;
             color: white;
             transition: background-color 0.3s, transform 0.2s;
+            position: relative;
+            z-index: 501; /* Ensure it's above the bottom bar */
         }
         .button:hover {
             background-color: #00bfff;
@@ -81,14 +105,6 @@
         }
         .hidden {
             display: none;
-        }
-        /* ポイント表示 */
-        #points-display {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 2em;
-            color: #ff1493;
         }
         /* タイプの色設定（白抜き） */
         .type {
@@ -135,10 +151,10 @@
             100% { transform: translateX(0); }
         }
         .bounce {
-            animation: bounce 0.5s;
+            animation: bounce 1s; /* 変更: アニメーション時間を1秒に延長 */
         }
         .shake {
-            animation: shake 0.5s;
+            animation: shake 1s; /* 変更: アニメーション時間を1秒に延長 */
         }
         /* ハッピーアニメーション */
         @keyframes happyAnimation {
@@ -149,7 +165,7 @@
             100% { transform: translateY(0); }
         }
         .happy {
-            animation: happyAnimation 1s;
+            animation: happyAnimation 1.5s; /* 変更: アニメーション時間を1.5秒に延長 */
         }
         /* マスターボール画像 */
         #master-ball {
@@ -218,6 +234,7 @@
             background-color: #fff;
             padding: 40px;
             border-radius: 20px;
+            position: relative;
         }
         /* 特別な報酬ポップアップのスタイル */
         #special-reward-popup {
@@ -241,18 +258,73 @@
         #special-reward-popup.show {
             display: flex;
         }
+        /* 選択したポケモンの後ろ姿画像のスタイル */
+        .selected-pokemon-back-image {
+            width: 250px; /* 大きく変更 */
+            height: 250px; /* 大きく変更 */
+            margin: 10px;
+        }
+        /* ゲーム画面のボトムバー */
+        #game-bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 800px;
+            padding: 10px 15px;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.6); /* Reduced opacity */
+            border-top: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 500; /* Ensure it's below buttons with higher z-index */
+        }
+        /* 進捗バーのスタイル */
+        #progress-bar-container {
+            width: 40%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 20px;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #32cd32;
+            transition: width 0.5s;
+        }
+        /* マスターボール画像のスタイル */
+        .master-ball-image {
+            width: 80px;
+            height: 80px;
+        }
+        /* ゲーム画面のコンテナ調整 */
+        #game {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            padding-bottom: 100px; /* Space for the bottom bar */
+            box-sizing: border-box;
+        }
+        /* 新しい問題ボタンの位置調整 */
+        #new-problem-button {
+            margin-top: 20px;
+            z-index: 501; /* Ensure it's above the bottom bar */
+        }
     </style>
 </head>
 <body>
-    <!-- ポイント表示 -->
-    <div id="points-display" class="hidden">
-        ポイント: <span id="points">0</span>
-    </div>
-
     <!-- ストーリー画面 -->
     <div id="story">
-        <img src="images/title.png" alt="ポケモンたしざんゲーム" class="story-image">
-        <img src="images/pika.gif" alt="ピカチュウ" class="story-pikachu">
+        <h1 id="game-title"></h1>
+        <div id="random-pokemons" class="random-pokemons">
+            <!-- 3 Pokémonがここに表示されます -->
+        </div>
         <button class="button" onclick="beginAdventure()">はじめる</button>
     </div>
 
@@ -278,14 +350,14 @@
 
     <!-- チュートリアル画面 -->
     <div id="tutorial" class="hidden">
-        <p>100ポイントで とくべつなポケモン ゲット！</p>
+        <p>10もん せいかいで<br>とくべつなポケモンが もらえる！</p>
         <img id="master-ball" src="https://img.pokemondb.net/sprites/items/master-ball.png" alt="マスターボール">
         <button class="button" onclick="startGameAfterTutorial()">はじめる</button>
     </div>
 
     <!-- ゲーム画面 -->
     <div id="game" class="hidden">
-        <div id="special-reward-message" class="hidden">せいかいで とくべつなポケモンが もらえる！</div>
+        <div id="special-reward-message" class="hidden">10もん せいかいで<br>とくべつなポケモンが もらえる！</div>
         <div class="number-container">
             <div id="number1" class="number"></div>
             <div id="plus">+</div>
@@ -293,18 +365,27 @@
             <div id="equals">=</div>
             <div id="result" class="number">?</div>
         </div>
+        <!-- 答えのボタン -->
+        <div id="answers" class="hidden">
+            <button class="button answer-button" onclick="checkAnswer(0)"></button>
+            <button class="button answer-button" onclick="checkAnswer(1)"></button>
+            <button class="button answer-button" onclick="checkAnswer(2)"></button>
+            <button class="button answer-button" onclick="checkAnswer(3)"></button>
+        </div>
+        <!-- 新しい問題ボタン -->
+        <button id="new-problem-button" class="button hidden" onclick="generateNewProblem()">あたらしいもんだいへ</button>
+        <!-- ボトムバーの追加 -->
+        <div id="game-bottom-bar">
+            <!-- 選択したポケモンの後ろ姿 -->
+            <img id="selected-pokemon-back-image-game" src="" alt="選択したポケモン" class="selected-pokemon-back-image hidden">
+            <!-- 進捗バー -->
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <!-- マスターボール -->
+            <img src="https://img.pokemondb.net/sprites/items/master-ball.png" alt="マスターボール" class="master-ball-image">
+        </div>
     </div>
-
-    <!-- 答えのボタン -->
-    <div id="answers" class="hidden">
-        <button class="button answer-button" onclick="checkAnswer(0)"></button>
-        <button class="button answer-button" onclick="checkAnswer(1)"></button>
-        <button class="button answer-button" onclick="checkAnswer(2)"></button>
-        <button class="button answer-button" onclick="checkAnswer(3)"></button>
-    </div>
-
-    <!-- 新しい問題ボタン -->
-    <button id="new-problem-button" class="button hidden" onclick="generateNewProblem()">あたらしいもんだいへ</button>
 
     <!-- 結果画面 -->
     <div id="result-screen" class="hidden">
@@ -351,8 +432,9 @@
         const normalPokemonIds = Array.from({ length: maxPokemonId }, (_, i) => i + 1).filter(id => !legendaryAndMythicalPokemonIds.includes(id));
 
         let correctAnswer = 0;
-        let points = 0;
+        let correctAnswers = 0; // 累計正答数
         let selectedPokemonId = null;
+        let selectedPokemonBackImage = ''; // 選択したポケモンの後ろ姿画像URL
 
         const starterPokemonGroups = [
             [1, 4, 7], // カントー地方
@@ -379,7 +461,8 @@
             pokemonList.innerHTML = ''; // リストをクリア
 
             starters.forEach(async (pokemonId) => {
-                const pokemonImage = await fetchPokemonImage(pokemonId);
+                const pokemonInfo = await fetchPokemonInfo(pokemonId);
+                const pokemonImage = pokemonInfo.frontImage;
                 const imgElement = document.createElement('img');
                 imgElement.src = pokemonImage;
                 imgElement.alt = `Pokemon ${pokemonId}`;
@@ -387,18 +470,6 @@
                 imgElement.onclick = () => selectPokemon(pokemonId);
                 pokemonList.appendChild(imgElement);
             });
-        }
-
-        // ポケモンの画像を取得
-        async function fetchPokemonImage(pokemonId) {
-            try {
-                const response = await fetch(pokemonApiUrl + pokemonId);
-                const data = await response.json();
-                return data.sprites.front_default;
-            } catch (error) {
-                console.error('ポケモン画像の取得に失敗しました:', error);
-                return '';
-            }
         }
 
         // ポケモンの情報を取得
@@ -433,10 +504,24 @@
                         default: return `<span class="type">${typeInfo.type.name}</span>`;
                     }
                 }).join(' ');
-                return { name, types };
+                const frontImage = data.sprites.front_default;
+                const backImage = data.sprites.back_default || data.sprites.front_default; // フロント画像がない場合はフロントを代用
+                return { name, types, frontImage, backImage };
             } catch (error) {
                 console.error('ポケモン情報の取得に失敗しました:', error);
-                return { name: 'ふめい', types: 'ふめい' };
+                return { name: 'ふめい', types: 'ふめい', frontImage: '', backImage: '' };
+            }
+        }
+
+        // ポケモンの画像を取得（フロントのみ）
+        async function fetchPokemonImage(pokemonId) {
+            try {
+                const response = await fetch(`${pokemonApiUrl}${pokemonId}`);
+                const data = await response.json();
+                return data.sprites.front_default || ''; // フロント画像がない場合は空文字
+            } catch (error) {
+                console.error('ポケモン画像の取得に失敗しました:', error);
+                return '';
             }
         }
 
@@ -454,12 +539,44 @@
             }
         }
 
+        // タイトルを設定する関数
+        function setGameTitle() {
+            const title = "ポケモンたしざんゲーム";
+            const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8F00FF', '#FF1493', '#00CED1', '#FFD700'];
+            const titleElement = document.getElementById('game-title');
+            let coloredTitle = '';
+            for (let i = 0; i < title.length; i++) {
+                const char = title.charAt(i);
+                const color = colors[i % colors.length];
+                coloredTitle += `<span style="color:${color}">${char}</span>`;
+            }
+            titleElement.innerHTML = coloredTitle;
+        }
+
+        // ランダムな通常ポケモンを3匹表示する関数
+        async function loadRandomPokemons() {
+            const container = document.getElementById('random-pokemons');
+            container.innerHTML = ''; // クリア
+            const selectedIds = new Set();
+            while (selectedIds.size < 3) {
+                const randomId = normalPokemonIds[Math.floor(Math.random() * normalPokemonIds.length)];
+                selectedIds.add(randomId);
+            }
+            for (const pokemonId of selectedIds) {
+                const pokemonImage = await fetchPokemonImage(pokemonId);
+                const imgElement = document.createElement('img');
+                imgElement.src = pokemonImage;
+                imgElement.alt = `Pokemon ${pokemonId}`;
+                imgElement.classList.add('random-pokemon');
+                container.appendChild(imgElement);
+            }
+        }
+
         // 初期化時に特別な報酬ポップアップを非表示にする
-        window.onload = () => {
+        window.onload = async () => {
             console.log('Window loaded');
             try {
                 toggleVisibility('story', true);
-                toggleVisibility('points-display', false);
                 toggleVisibility('character-select', false);
                 toggleVisibility('tutorial', false);
                 toggleVisibility('game', false);
@@ -468,16 +585,18 @@
                 toggleVisibility('result-screen', false);
                 toggleVisibility('special-reward-popup', false);
                 console.log('画面の表示をきりかえました。');
+                setGameTitle();
+                await loadRandomPokemons();
             } catch (error) {
                 console.error('初期化中にエラーが発生しました:', error);
             }
         };
 
         // ポケモンの選択とポップアップの表示
-        function selectPokemon(pokemonId) {
+        async function selectPokemon(pokemonId) {
             selectedPokemonId = pokemonId;
             // ポップアップを表示
-            showPopup(pokemonId);
+            await showPopup(pokemonId);
         }
 
         async function showPopup(pokemonId) {
@@ -488,14 +607,17 @@
             const popupPokemonTypes = document.getElementById('popup-pokemon-types'); // タイプ表示用
 
             // ポケモン情報を取得
-            const pokemonImage = await fetchPokemonImage(pokemonId);
             const pokemonInfo = await fetchPokemonInfo(pokemonId);
+            const pokemonImage = pokemonInfo.frontImage;
 
             // ポップアップに情報をセット
             popupMessage.innerText = `${pokemonInfo.name}とぼうけんする？`;
             popupPokemonImage.src = pokemonImage;
             popupPokemonName.innerText = pokemonInfo.name;
             popupPokemonTypes.innerHTML = pokemonInfo.types; // タイプを表示
+
+            // 選択したポケモンの後ろ姿を保存
+            selectedPokemonBackImage = pokemonInfo.backImage;
 
             // ポップアップを表示
             popup.classList.add('show');
@@ -517,7 +639,7 @@
                 // チュートリアル画面へ
                 toggleVisibility('character-select', false);
                 toggleVisibility('tutorial', true);
-            }, 1000); // アニメーションの継続時間に合わせる
+            }, 1500); // アニメーションの継続時間に合わせる（1.5秒）
         }
 
         function cancelSelection() {
@@ -526,6 +648,7 @@
             document.getElementById('popup').classList.add('hidden');
             // 選択をリセット
             selectedPokemonId = null;
+            selectedPokemonBackImage = '';
         }
 
         // チュートリアル後にゲームを開始
@@ -536,7 +659,6 @@
 
         // ゲームを開始する関数
         function startGame() {
-            toggleVisibility('points-display', true);
             toggleVisibility('result-screen', false);
             toggleVisibility('game', true);
             toggleVisibility('answers', true);
@@ -547,6 +669,21 @@
             document.getElementById('pokemon-name').innerText = '';
             document.getElementById('pokemon-types').innerText = '';
             generateNewProblem();
+
+            // 選択したポケモンの後ろ姿を表示
+            const backImageElement = document.getElementById('selected-pokemon-back-image-game');
+            if (selectedPokemonBackImage) {
+                backImageElement.src = selectedPokemonBackImage;
+                backImageElement.classList.remove('hidden');
+                // アニメーションを適用
+                backImageElement.classList.add('bounce');
+                setTimeout(() => backImageElement.classList.remove('bounce'), 1000); // アニメーション後にクラスを削除
+            } else {
+                backImageElement.classList.add('hidden');
+            }
+
+            // 進捗バーを更新
+            updateProgressBar();
         }
 
         // 冒険の開始（ストーリー画面を表示）
@@ -573,9 +710,9 @@
                 button.innerText = answers[index];
             });
 
-            // 100ポイントの倍数に達する可能性がある場合にメッセージを表示
+            // 10問正解に近づいている場合にメッセージを表示
             const specialRewardMessage = document.getElementById('special-reward-message');
-            if ((points % 100) >= 90) {
+            if ((correctAnswers % 10) === 9) {
                 specialRewardMessage.classList.remove('hidden');
             } else {
                 specialRewardMessage.classList.add('hidden');
@@ -627,13 +764,21 @@
                 resultMessage.innerHTML = '<span style="font-size:5em; color:green;">〇</span><br><span style="font-size:2em;">すごい！せいかいです！</span>';
                 answerButtons[selectedAnswerIndex].classList.add('correct');
 
-                // ポイント加算
-                points += 10;
-                document.getElementById('points').innerText = points;
-                console.log(`Points updated: ${points}`);
+                // 正答数を加算
+                correctAnswers += 1;
+                console.log(`Correct Answers: ${correctAnswers}`);
 
-                // 100ポイントごとに特別な報酬ポップアップを表示
-                if (points % 100 === 0) {
+                // 進捗バーを更新
+                updateProgressBar();
+
+                // 特別な報酬ポップアップを表示するかどうかを判定
+                if (correctAnswers % 10 === 0) {
+                    // 特別な報酬メッセージを表示
+                    const specialRewardMessage = document.getElementById('special-reward-message');
+                    specialRewardMessage.innerHTML = '10もん せいかいで<br>とくべつなポケモンが もらえる！';
+                    specialRewardMessage.classList.remove('hidden');
+
+                    // 特別な報酬ポップアップを表示
                     await showSpecialRewardPopup();
                 } else {
                     // 正解時に結果画面に移行
@@ -671,8 +816,8 @@
             if (isCorrect) {
                 // 通常ポケモンからランダムに選択（伝説や幻を除外）
                 const resultPokemonId = normalPokemonIds[Math.floor(Math.random() * normalPokemonIds.length)];
-                const resultPokemonImage = await fetchPokemonImage(resultPokemonId);
                 const resultPokemonInfo = await fetchPokemonInfo(resultPokemonId);
+                const resultPokemonImage = resultPokemonInfo.frontImage;
 
                 // ポケモン画像を設定
                 resultPokemonImageElement.src = resultPokemonImage;
@@ -687,7 +832,7 @@
 
                 // アニメーションを適用
                 resultPokemonImageElement.classList.add('bounce'); // 正解時のアニメーション
-                setTimeout(() => resultPokemonImageElement.classList.remove('bounce'), 1000);
+                setTimeout(() => resultPokemonImageElement.classList.remove('bounce'), 1000); // アニメーション後にクラスを削除
             } else {
                 loadingContainer.classList.add('hidden');
                 resultPokemonImageElement.classList.add('hidden');
@@ -705,13 +850,21 @@
 
             // 特別な報酬ポケモンを取得
             const legendaryPokemonId = legendaryAndMythicalPokemonIds[Math.floor(Math.random() * legendaryAndMythicalPokemonIds.length)];
-            const rewardPokemonImage = await fetchPokemonImage(legendaryPokemonId);
             const rewardPokemonInfo = await fetchPokemonInfo(legendaryPokemonId);
+            const rewardPokemonImage = rewardPokemonInfo.frontImage;
 
             // ポケモン情報をポップアップにセット
             specialPokemonName.innerText = rewardPokemonInfo.name;
             specialPokemonImage.src = rewardPokemonImage;
             specialPokemonTypes.innerHTML = rewardPokemonInfo.types;
+
+            // 特別なポケモンにアニメーションを追加
+            specialPokemonImage.classList.add('bounce');
+
+            // アニメーション後にクラスを削除
+            setTimeout(() => {
+                specialPokemonImage.classList.remove('bounce');
+            }, 1000); // アニメーション時間に合わせる（1秒）
 
             // ポップアップを表示
             specialRewardPopup.classList.add('show');
@@ -728,6 +881,13 @@
 
             // 次の問題へ進む
             startGame();
+        }
+
+        // 進捗バーを更新する関数
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progress-bar');
+            const progress = (correctAnswers % 10) / 10 * 100;
+            progressBar.style.width = `${progress}%`;
         }
     </script>
 </body>

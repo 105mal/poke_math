@@ -1,3 +1,4 @@
+/* 基本スタイル */
 body {
     font-family: 'Comic Sans MS', 'Arial', sans-serif;
     background: linear-gradient(to bottom, #f0fff0, #e0ffff);
@@ -9,21 +10,61 @@ body {
     justify-content: center;
     align-items: center;
     position: relative;
+    margin: 0;
+    padding: 0;
 }
+
+h1 {
+    font-size: 4em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #8F00FF, #FF1493, #00CED1, #FFD700);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 h2 {
     font-size: 3em;
     color: #ff4500;
 }
+
 p {
     font-size: 2em;
     color: #ff6347;
 }
+
 .pokemon-image {
     width: 200px;
     height: 200px;
     cursor: pointer;
     margin: 10px;
+    transition: transform 0.3s;
 }
+
+.pokemon-image:hover {
+    transform: scale(1.1);
+}
+
+.random-pokemon {
+    width: 200px;
+    height: 200px;
+    margin: 10px;
+    transition: transform 0.3s;
+}
+
+.random-pokemon:hover {
+    transform: scale(1.1);
+}
+
+.random-pokemons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
 .number-container {
     display: flex;
     align-items: center;
@@ -31,59 +72,151 @@ p {
     gap: 10px;
     margin-bottom: 20px;
 }
+
 .number {
     font-size: 5em;
     color: #ff8c00;
 }
+
 .button {
-    font-size: 2em;
-    padding: 15px 40px;
-    margin-top: 20px;
+    font-size: 1.5em;
+    padding: 10px 30px;
+    margin: 10px;
     border: none;
-    border-radius: 50px;
+    border-radius: 25px;
     cursor: pointer;
     background-color: #1e90ff;
     color: white;
     transition: background-color 0.3s, transform 0.2s;
+    position: relative;
+    z-index: 501;
 }
+
 .button:hover {
     background-color: #00bfff;
     transform: scale(1.05);
 }
+
 .answer-button {
     background-color: #32cd32;
     color: #fff;
-    font-size: 2em;
-    padding: 15px 40px;
+    font-size: 1.5em;
+    padding: 10px 30px;
     margin: 10px;
     border: none;
-    border-radius: 50px;
+    border-radius: 25px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
 }
+
 .answer-button:hover {
     background-color: #3cb371;
     transform: scale(1.05);
 }
+
 .correct {
     background-color: #32CD32 !important;
     color: white;
 }
+
 .incorrect {
     background-color: #FF4500 !important;
     color: white;
 }
+
 .hidden {
     display: none;
 }
+
+/* ポップアップの共通スタイル */
+#popup, #special-reward-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
+    display: none; /* デフォルトは非表示 */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* ポップアップ表示時のスタイル */
+#popup.show, #special-reward-popup.show {
+    display: flex;
+}
+
+/* ポップアップ内コンテンツのスタイル */
+#popup-content, #special-reward-content {
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* 特別な報酬メッセージのスタイル */
+#special-reward-message {
+    font-size: 2.5em; /* フォントサイズを大きく */
+    color: #32CD32; /* 緑色 */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* 結果メッセージのスタイル */
+.result-message {
+    font-size: 2.5em; /* フォントサイズを大きく */
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333; /* デフォルトの色 */
+}
+
+.correct-message {
+    color: #32CD32; /* 正解時は緑色 */
+}
+
+.incorrect-message {
+    color: #FF4500; /* 不正解時は赤色 */
+}
+
+/* 結果メッセージ内のアイコンスタイル */
+.result-icon {
+    display: block; /* アイコンをブロック要素にして改行 */
+    font-size: 2em; /* アイコンのサイズを調整 */
+    margin-bottom: 10px; /* アイコンとテキストの間にマージン */
+}
+
+.correct-icon {
+    color: #32CD32; /* 正解時の色 */
+}
+
+.incorrect-icon {
+    color: #FF4500; /* 不正解時の色 */
+}
+
+/* Pokémonの名前のスタイル */
+.pokemon-name {
+    font-size: 1.8em; /* フォントサイズを大きく */
+    font-weight: bold;
+    color: #333; /* デフォルトの色 */
+    margin-top: 10px;
+}
+
+.pokemon-types {
+    margin-top: 5px;
+}
+
 /* タイプの色設定（白抜き） */
 .type {
-    font-size: 1.5em;
+    font-size: 1.2em;
     margin-right: 5px;
     padding: 5px 10px;
     border-radius: 5px;
     color: white;
 }
+
 .type.normal { background-color: #A8A878; }
 .type.fire { background-color: #F08030; }
 .type.water { background-color: #6890F0; }
@@ -102,6 +235,7 @@ p {
 .type.dark { background-color: #705848; }
 .type.steel { background-color: #B8B8D0; }
 .type.fairy { background-color: #EE99AC; }
+
 /* アニメーションの定義 */
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
@@ -114,18 +248,22 @@ p {
         transform: translateY(-15px);
     }
 }
+
 @keyframes shake {
     0% { transform: translateX(0); }
     10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
     20%, 40%, 60%, 80% { transform: translateX(10px); }
     100% { transform: translateX(0); }
 }
+
 .bounce {
-    animation: bounce 0.5s;
+    animation: bounce 1s;
 }
+
 .shake {
-    animation: shake 0.5s;
+    animation: shake 1s;
 }
+
 /* ハッピーアニメーション */
 @keyframes happyAnimation {
     0% { transform: translateY(0); }
@@ -134,52 +272,69 @@ p {
     75% { transform: translateY(-10px); }
     100% { transform: translateY(0); }
 }
+
 .happy {
-    animation: happyAnimation 1s;
+    animation: happyAnimation 1.5s;
 }
-/* マスターボール画像 */
-#master-ball {
-    width: 100px;
-    height: 100px;
-    margin: 10px auto;
-    display: block;
+
+/* 輝きアニメーション */
+@keyframes sparkle {
+    0% { box-shadow: 0 0 5px #fff; }
+    50% { box-shadow: 0 0 20px #fff; }
+    100% { box-shadow: 0 0 5px #fff; }
 }
-/* チュートリアルテキストサイズ */
-#tutorial p {
-    font-size: 2em;
+
+.sparkle {
+    animation: sparkle 1s infinite;
 }
-/* ポップアップのスタイル */
-#popup {
+
+/* シェイクアニメーション */
+@keyframes shakeAnimation {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shakeAnimation 0.5s;
+}
+
+/* ローディングスピナーのスタイル */
+.loading-spinner {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none; /* 初期状態は非表示 */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
 }
-#popup-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #ff4500;
+    border-radius: 50%;
+    width: 80px; /* サイズを60pxから80pxに変更 */
+    height: 80px; /* サイズを60pxから80pxに変更 */
+    animation: spin 1s linear infinite;
 }
-#popup.show {
-    display: flex;
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
+
 /* ローディングテキスト */
 .loading-text {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 2em;
+    font-size: 1.5em;
     color: #ff4500;
     text-shadow: 1px 1px 2px #fff;
 }
+
 /* ストーリー画面の画像スタイル */
 .story-image {
     max-width: 800px;
@@ -187,37 +342,252 @@ p {
     height: auto;
     margin: 0 auto 20px auto;
 }
+
 .story-pikachu {
     width: 300px;
     height: auto;
     display: block;
     margin: 0 auto 20px auto;
 }
+
 /* ストーリー画面のみ白い背景を適用 */
 #story {
     background-color: #fff;
     padding: 40px;
     border-radius: 20px;
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-/* 特別な報酬ポップアップのスタイル */
-#special-reward-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none; /* 初期状態は非表示 */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+
+/* 選択したポケモンの後ろ姿画像のスタイル */
+.selected-pokemon-back-image {
+    width: 250px;
+    height: 250px;
+    margin: 10px;
+    transition: transform 0.3s;
 }
-#special-reward-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
+
+.selected-pokemon-back-image:hover {
+    transform: scale(1.1);
 }
-#special-reward-popup.show {
+
+/* ゲーム画面のボトムバー */
+#game-bottom-bar {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 800px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border-top: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    z-index: 500;
+}
+
+#progress-bar-container {
+    width: 40%;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 20px;
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #32cd32;
+    transition: width 0.5s;
+}
+
+.master-ball-image {
+    width: 120px; /* サイズを80pxから120pxに変更 */
+    height: 120px; /* サイズを80pxから120pxに変更 */
+    cursor: pointer; /* クリック可能なアイコンとしての視覚的ヒント */
+    transition: transform 0.3s;
+}
+
+.master-ball-image:hover {
+    transform: scale(1.1); /* ホバー時に少し大きく表示 */
+}
+
+/* モンスターボールのスタイル修正 */
+#master-ball {
+    width: 120px; /* サイズを80pxから120pxに変更 */
+    height: 120px; /* サイズを80pxから120pxに変更 */
+    cursor: pointer; /* クリック可能なアイコンとしての視覚的ヒント */
+    transition: transform 0.3s;
+}
+
+#master-ball:hover {
+    transform: scale(1.1); /* ホバー時に少し大きく表示 */
+}
+
+/* ロード中のモンスターボール画像のスタイル修正 */
+#loading-ball {
+    width: 120px; /* サイズを80pxから120pxに変更 */
+    height: 120px; /* サイズを80pxから120pxに変更 */
+    animation: spin 1s linear infinite; /* スピンアニメーションを追加 */
+}
+
+/* ローディングスピナーのスタイル修正 */
+.spinner {
+    width: 80px; /* サイズを60pxから80pxに変更 */
+    height: 80px; /* サイズを60pxから80pxに変更 */
+}
+
+/* その他の既存スタイルは省略 */
+
+/* レスポンシブデザインの強化 */
+@media (max-width: 1024px) {
+    h1 {
+        font-size: 3.5em;
+    }
+    
+    h2 {
+        font-size: 2.8em;
+    }
+    
+    p {
+        font-size: 1.8em;
+    }
+    
+    .pokemon-image, .random-pokemon, .selected-pokemon-back-image {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .button, .answer-button {
+        font-size: 1.3em;
+        padding: 8px 25px;
+    }
+    
+    .number {
+        font-size: 4em;
+    }
+    
+    #master-ball, .master-ball-image {
+        width: 100px; /* デスクトップより小さいデバイス向けに調整 */
+        height: 100px;
+    }
+    
+    #loading-ball {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .spinner {
+        width: 70px;
+        height: 70px;
+    }
+    
+    #progress-bar-container {
+        width: 45%;
+        margin: 0 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 3em;
+    }
+    
+    h2 {
+        font-size: 2.5em;
+    }
+    
+    p {
+        font-size: 1.5em;
+    }
+    
+    .pokemon-image, .random-pokemon, .selected-pokemon-back-image {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .button, .answer-button {
+        font-size: 1.2em;
+        padding: 7px 20px;
+    }
+    
+    .number {
+        font-size: 3.5em;
+    }
+    
+    #master-ball, .master-ball-image {
+        width: 90px;
+        height: 90px;
+    }
+    
+    #loading-ball {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .spinner {
+        width: 60px;
+        height: 60px;
+    }
+    
+    #progress-bar-container {
+        width: 50%;
+        margin: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2.5em;
+    }
+    
+    h2 {
+        font-size: 2em;
+    }
+    
+    p {
+        font-size: 1.2em;
+    }
+    
+    .pokemon-image, .random-pokemon, .selected-pokemon-back-image {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .button, .answer-button {
+        font-size: 1em;
+        padding: 6px 15px;
+    }
+    
+    .number {
+        font-size: 2.5em;
+    }
+    
+    #master-ball, .master-ball-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    #loading-ball {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+    }
+    
+    #progress-bar-container {
+        width: 60%;
+        margin: 0 5px;
+    }
 }

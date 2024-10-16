@@ -445,6 +445,11 @@ p {
     height: 80px; /* サイズを60pxから80pxに変更 */
 }
 
+<<<<<<< HEAD
+=======
+/* その他の既存スタイルは省略 */
+
+>>>>>>> eb8896ad408cdb74886362bf268c23a4929374a7
 /* レスポンシブデザインの強化 */
 @media (max-width: 1024px) {
     h1 {
@@ -588,6 +593,7 @@ p {
         width: 60%;
         margin: 0 5px;
     }
+<<<<<<< HEAD
 }
 
 /* 追加: チュートリアル画面のレイアウト調整 */
@@ -601,4 +607,6 @@ p {
 /* 修正: #tutorialがhiddenクラスを持つ場合にdisplay: none;とする */
 #tutorial.hidden {
     display: none;
+=======
+>>>>>>> eb8896ad408cdb74886362bf268c23a4929374a7
 }

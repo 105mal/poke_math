@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ポケモン図鑑</title>
+    <!-- レスポンシブデザインのためのメタタグ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>ポケモン図鑑</h1>
+        <button class="button" onclick="goBack()">戻る</button>
+    </header>
+
+    <main>
+        <div id="pokemon-cards" class="pokemon-cards">
+            <!-- ポケモンカードがここに表示されます -->
+        </div>
+    </main>
+
+    <!-- ポケモン詳細ポップアップ -->
+    <div id="pokemon-detail-popup" class="pokemon-detail-popup hidden">
+        <div class="popup-content">
+            <button class="close-button" onclick="closePokemonDetailPopup()" aria-label="ポップアップを閉じる">&times;</button>
+            <h2 id="detail-pokemon-name">ポケモン名</h2>
+            <img id="detail-pokemon-image" src="" alt="ポケモン画像" class="detail-pokemon-image">
+            <div id="detail-pokemon-types" class="detail-pokemon-types">
+                <!-- タイプがここに表示されます -->
+            </div>
+            <p id="detail-pokemon-description" class="detail-pokemon-description">図鑑説明</p>
+        </div>
+    </div>
+
+    <!-- ローディングスピナー -->
+    <div id="loading-spinner" class="loading-spinner hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- エラーメッセージ表示 -->
+    <div id="error-message" class="error-message hidden" role="alert">
+        <p>エラーが発生しました。再度お試しください。</p>
+        <button class="button" onclick="retry()" aria-label="再試行">再試行</button>
+    </div>
+
+    <script src="js/picturebook.js"></script>
+</body>
+</html>

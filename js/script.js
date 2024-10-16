@@ -16,11 +16,19 @@ const legendaryAndMythicalPokemonIds = [
 // 通常ポケモンのIDリスト（伝説・幻を除外）
 const normalPokemonIds = Array.from({ length: maxPokemonId }, (_, i) => i + 1).filter(id => !legendaryAndMythicalPokemonIds.includes(id));
 
+// ローカルストレージのキー定義
+const LOCAL_STORAGE_KEY = 'collectedPokemonIds';
+
+// 図鑑に表示するポケモンのIDリスト
+let collectedPokemonIds = [];
+
+// 正解関連の変数
 let correctAnswer = 0;
 let correctAnswers = 0; // 累計正答数
 let selectedPokemonId = null;
 let selectedPokemonBackImage = ''; // 選択したポケモンの後ろ姿画像URL
 
+// スターターポケモンのグループ
 const starterPokemonGroups = [
     [1, 4, 7], // カントー地方
     [152, 155, 158], // ジョウト地方
@@ -33,6 +41,35 @@ const starterPokemonGroups = [
 ];
 
 const starterFixedPokemon = [25, 133]; // ピカチュウ、イーブイ
+
+// ローカルストレージ用ユーティリティ関数
+
+// ローカルストレージから収集済みポケモンIDの配列を取得
+function getCollectedPokemonIds() {
+    const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return storedData ? JSON.parse(storedData) : [];
+}
+
+// ローカルストレージに収集済みポケモンIDを保存
+function saveCollectedPokemonIds(ids) {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(ids));
+}
+
+// 新しいポケモンIDを追加（重複を避ける）
+function addCollectedPokemonId(pokemonId) {
+    const ids = getCollectedPokemonIds();
+    if (!ids.includes(pokemonId)) {
+        ids.push(pokemonId);
+        saveCollectedPokemonIds(ids);
+        collectedPokemonIds = ids; // 更新
+    }
+}
+
+// ポケモンを取得する関数
+function obtainPokemon(pokemonId) {
+    addCollectedPokemonId(pokemonId);
+    console.log(`ポケモンID ${pokemonId} をローカルストレージに保存しました。`);
+}
 
 // メインタイトルの設定
 function setGameTitle() {
@@ -178,7 +215,7 @@ window.onload = async () => {
         toggleVisibility('special-reward-popup', false);
         toggleVisibility('error-message', false);
         toggleVisibility('loading-spinner', false); // スピナー非表示
-        console.log('画面の表示をきりかえました。');
+        console.log('画面の表示を切り替えました。');
         setGameTitle();
         await loadRandomPokemons();
     } catch (error) {
@@ -277,6 +314,9 @@ function confirmSelection() {
     const popupPokemonImage = document.getElementById('popup-pokemon-image');
     popupPokemonImage.classList.add('happy');
 
+    // 取得したポケモンをローカルストレージに保存
+    obtainPokemon(selectedPokemonId);
+
     // アニメーション後にチュートリアル画面へ遷移
     setTimeout(() => {
         // ポップアップを非表示
@@ -312,6 +352,7 @@ function startGame() {
     toggleVisibility('game', true);
     toggleVisibility('answers', true);
     toggleVisibility('new-problem-button', true);
+    toggleVisibility('quit-button', true); /* 【やめる】ボタンを表示 */
     toggleVisibility('story', false);
     toggleVisibility('tutorial', false);
     toggleVisibility('character-select', false);
@@ -507,9 +548,12 @@ async function showResultScreen(isCorrect) {
             // アニメーションを適用
             resultPokemonImageElement.classList.add('bounce'); // 正解時のアニメーション
             setTimeout(() => resultPokemonImageElement.classList.remove('bounce'), 1000); // アニメーション後にクラスを削除
+
+            // ポケモンをローカルストレージに保存
+            obtainPokemon(resultPokemonId);
         } catch (error) {
             console.error('結果画面表示中にエラーが発生しました:', error);
-            showError();
+            showError('結果画面の表示に失敗しました。');
         }
     } else {
         loadingContainer.classList.add('hidden');
@@ -552,10 +596,13 @@ async function showSpecialRewardPopup() {
         specialRewardPopup.classList.add('show');
         specialRewardPopup.classList.remove('hidden');
 
-        console.log(`Special Reward: ${rewardPokemonInfo.name} appeared!`);
+        console.log(`Special Reward: ${rewardPokemonInfo.name} が出現しました！`);
+
+        // 取得したポケモンをローカルストレージに保存
+        obtainPokemon(legendaryPokemonId);
     } catch (error) {
         console.error('特別な報酬ポップアップ表示中にエラーが発生しました:', error);
-        showError();
+        showError('特別な報酬の表示に失敗しました。');
     }
 }
 
@@ -570,8 +617,12 @@ function closeSpecialRewardPopup() {
 }
 
 // エラーメッセージを表示する関数
-function showError() {
-    toggleVisibility('error-message', true);
+function showError(message = 'エラーが発生しました。再度お試しください。') {
+    const errorMessage = document.getElementById('error-message');
+    if (errorMessage) {
+        errorMessage.querySelector('p').innerText = message;
+        toggleVisibility('error-message', true);
+    }
 }
 
 // エラーメッセージを非表示にし再試行する関数
@@ -581,7 +632,7 @@ async function retry() {
         await loadRandomPokemons();
     } catch (error) {
         console.error('再試行中にエラーが発生しました:', error);
-        showError();
+        showError('再試行中にエラーが発生しました。');
     }
 }
 
@@ -590,4 +641,23 @@ function updateProgressBar() {
     const progressBar = document.getElementById('progress-bar');
     const progress = (correctAnswers % 10) / 10 * 100;
     progressBar.style.width = `${progress}%`;
+}
+
+// 【ずかん】ボタンの動作を定義する関数
+function openPictureBook() {
+    window.location.href = 'picturebook.html';
+}
+
+/* 新たに追加した【やめる】ボタンの動作を定義する関数 */
+function quitGame() {
+    toggleVisibility('result-screen', false);
+    toggleVisibility('game', false);
+    toggleVisibility('answers', false);
+    toggleVisibility('new-problem-button', false);
+    toggleVisibility('quit-button', false);
+    toggleVisibility('story', true);
+    toggleVisibility('tutorial', false);
+    toggleVisibility('character-select', false);
+    toggleVisibility('error-message', false);
+    toggleVisibility('loading-spinner', false);
 }

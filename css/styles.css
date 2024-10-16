@@ -128,6 +128,13 @@ p {
     display: none;
 }
 
+/* ボタンのコンテナを中央揃えにする */
+#story .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* ボタン間のスペース */
+}
+
 /* ポップアップの共通スタイル */
 #popup, #special-reward-popup {
     position: fixed;
@@ -149,7 +156,7 @@ p {
 
 /* ポップアップ内コンテンツのスタイル */
 #popup-content, #special-reward-content {
-    background-color: white;
+    background-color: #fff;
     padding: 20px 30px;
     border-radius: 10px;
     text-align: center;
@@ -602,3 +609,201 @@ p {
 #tutorial.hidden {
     display: none;
 }
+
+/* 図鑑ページのスタイル */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 3em;
+    color: #ff6347;
+}
+
+.pokemon-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.pokemon-card {
+    background-color: #f8f8f8;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    width: 200px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer; /* カードがクリック可能であることを示す */
+}
+
+.pokemon-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.pokemon-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.pokemon-info {
+    margin-top: 10px;
+    text-align: left;
+    font-size: 1.2em;
+}
+
+.pokemon-info p {
+    margin: 5px 0;
+}
+
+/* エラーメッセージのスタイル（既存のものと重複しないように確認） */
+#error-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffe6e6;
+    padding: 20px 30px;
+    border: 2px solid #ff4d4d;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1001;
+}
+
+#error-message p {
+    color: #cc0000;
+    font-size: 1.5em;
+}
+
+#error-message .button {
+    background-color: #cc0000;
+}
+
+#error-message .button:hover {
+    background-color: #ff1a1a;
+}
+
+/* ポケモン詳細ポップアップのスタイル */
+.pokemon-detail-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* 半透明の黒背景 */
+    display: none; /* デフォルトは非表示 */
+    justify-content: center;
+    align-items: center;
+    z-index: 1002; /* 他のポップアップより前面に表示 */
+}
+
+.pokemon-detail-popup.show {
+    display: flex;
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    position: relative;
+    animation: popIn 0.5s forwards;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.close-button:hover {
+    color: #ff4500;
+}
+
+.detail-pokemon-image {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    margin: 20px 0;
+    transition: transform 0.3s;
+}
+
+.detail-pokemon-image.animate-pop {
+    animation: popIn 0.5s forwards;
+}
+
+.detail-pokemon-image.animate-pop-out {
+    animation: popOut 0.5s forwards;
+}
+
+.detail-pokemon-types {
+    margin: 10px 0;
+}
+
+.detail-pokemon-description {
+    font-size: 1.2em;
+    color: #555;
+    margin-top: 15px;
+}
+
+/* アニメーションの定義 */
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes popOut {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+.animate-pop {
+    animation: popIn 0.5s forwards;
+}
+
+.animate-pop-out {
+    animation: popOut 0.5s forwards;
+}
+
+/* 追加: 【やめる】ボタンのスタイル */
+.button.quit-button {
+    background-color: #ff7f7f; /* 少し優しい赤色 */
+    color: white;
+}
+
+.button.quit-button:hover {
+    background-color: #ff4d4d; /* ホバー時に少し濃い赤色 */
+}
+
+/* 他の既存のスタイルはここに含まれます */
+/* ... */

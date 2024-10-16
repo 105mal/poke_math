@@ -14,6 +14,8 @@
         <div id="random-pokemons" class="random-pokemons">
             <!-- 3 Pokémonがここに表示されます -->
         </div>
+        <!-- 【ずかん】ボタンを追加 -->
+        <button class="button" onclick="openPictureBook()">ずかん</button>
         <button class="button" onclick="beginAdventure()">はじめる</button>
     </div>
 
@@ -63,6 +65,8 @@
         </div>
         <!-- 新しい問題ボタン -->
         <button id="new-problem-button" class="button hidden" onclick="generateNewProblem()">あたらしいもんだいへ</button>
+        <!-- 【やめる】ボタンを追加 -->
+        <button class="button quit-button" onclick="quitGame()">やめる</button>
         <!-- ボトムバーの追加 -->
         <div id="game-bottom-bar">
             <!-- 選択したポケモンの後ろ姿 -->
@@ -98,6 +102,8 @@
             <img id="special-reward-pokemon-image" src="" alt="特別なポケモン" class="pokemon-image">
             <div id="special-pokemon-types" class="pokemon-types"></div>
             <button class="button" onclick="closeSpecialRewardPopup()">とじる</button>
+            <!-- 【ずかんへ】ボタンを追加 -->
+            <button class="button" onclick="openPictureBook()">ずかんへ</button>
         </div>
     </div>
 

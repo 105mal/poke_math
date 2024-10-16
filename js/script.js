@@ -167,6 +167,7 @@ function toggleSpinner(isVisible) {
 window.onload = async () => {
     console.log('Window loaded');
     try {
+        // 初期表示設定
         toggleVisibility('story', true);
         toggleVisibility('character-select', false);
         toggleVisibility('tutorial', false);
